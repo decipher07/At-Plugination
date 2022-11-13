@@ -11,11 +11,4 @@ const client = new Client({
     port: config.postgres.port
 })
 
-client.connect( (err: Error) => {
-    if ( err )
-        throw err ;
-    
-    Logging.info("Database Connected!");
-})
-
 export default client;

@@ -1,10 +1,17 @@
 import express, { Response, Request, NextFunction, Express } from "express";
 import Logging from "./Library/logging";
 import { config } from './config/config';
-import connectToDatabase  from './database/connect'
+import client from "./database/connect";
+import { QueryResult } from "pg";
+import collectService from "./routers/collect.service.routes"
 
 /** Connect ot the Database */
-connectToDatabase
+client.connect((err) => {
+    if (err)
+        throw err ;
+    
+    Logging.info("Database Connected");
+});
 
 const app: Express = express();
 
@@ -39,6 +46,33 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 app.get('/ping', (req: Request, res: Response, next: NextFunction) => res.status(200).json({"Hello": "World"}));
+
+app.get('/check', (req: Request, res: Response ) => {
+    
+    const query = "SELECT * FROM movies";
+
+    client.query(query, (error, result : QueryResult ) => {
+
+        if (error) {
+          res.status(400).json({error})
+        }
+        
+        if(result.rows < ('1' as any) ) {
+          res.status(404).send({
+          status: 'Failed',
+          message: 'No student information found',
+          });
+        } else {
+          res.status(200).send({
+          status: 'Successful',
+          message: 'Students Information retrieved',
+          students: result.rows,
+          });
+        }
+      });
+})
+
+app.use('/collect', collectService);
 
 /** Error handling */
 app.use((req: Request, res: Response, next: NextFunction) => {
