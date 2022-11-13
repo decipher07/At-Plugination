@@ -2,19 +2,23 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const MONGO_USERNAME = process.env.MONGO_USERNAME || '';
-const MONGO_PASSWORD = process.env.MONGO_PASSWORD || '';
-const MONGO_URL = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@cluster0.menvh.mongodb.net/db`;
-
 const SERVER_PORT = process.env.SERVER_PORT ? Number(process.env.SERVER_PORT) : 3000;
 
+const PGUSER=process.env.PGUSER || '';
+const PGHOST=process.env.PGHOST || '';
+const PGPASSWORD=process.env.PGPASSWORD || '';
+const PGDATABASE=process.env.PGDATABASE || '';
+const PGPORT=process.env.PGPORT ? Number(process.env.PGPORT) : 5432;
+
 export const config = {
-    mongo: {
-        username: MONGO_USERNAME,
-        password: MONGO_PASSWORD,
-        url: MONGO_URL
-    },
     server: {
         port: SERVER_PORT
+    },
+    postgres: {
+        username: PGUSER,
+        hostname: PGHOST,
+        password: PGPASSWORD,
+        database: PGDATABASE,
+        port: PGPORT
     }
 };
