@@ -1,23 +1,10 @@
 import express, { Response, Request, NextFunction, Express } from "express";
 import Logging from "./Library/logging";
 import { config } from './config/config';
-import { Client } from "pg";
+import connectToDatabase  from './database/connect'
 
-/** Connect to Postgres */
-const client = new Client({
-    user: config.postgres.username,
-    host: config.postgres.hostname,
-    database: config.postgres.database,
-    password: config.postgres.password,
-    port: config.postgres.port
-})
-
-client.connect( (err: Error) => {
-    if ( err )
-        throw err ;
-    
-    Logging.info("Database Connected!");
-})
+/** Connect ot the Database */
+connectToDatabase
 
 const app: Express = express();
 
