@@ -21,5 +21,20 @@ const createEntryInCollect = async ( req: Request, res: Response, next: NextFunc
 
 }
 
+const readEntryInCollect = async ( req: Request, res: Response, next: NextFunction ) : Promise <Response> => {
 
-export { createEntryInCollect }; 
+    const response_id : string = req.params.response_id;
+
+    const query = "SELECT * FROM forms WHERE response_id=$1";
+    const values = [ response_id ];
+
+    try {
+        let readQueryExecutionResult: QueryResult = await client.query(query, values);
+        return res.status(200).json({"success": true, "data": readQueryExecutionResult.rows, "message": null});
+    } catch ( err : any ){
+        Logging.error(err.message);
+        return res.status(404).json({"success": false, "data": null, "message": "Error in reading data from database"});
+    }
+}
+
+export { createEntryInCollect, readEntryInCollect };
