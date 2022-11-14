@@ -37,4 +37,21 @@ const readEntryInCollect = async ( req: Request, res: Response, next: NextFuncti
     }
 }
 
-export { createEntryInCollect, readEntryInCollect };
+/** Current Situation: Keeping updates to name for the data */
+const updateEntryInCollect = async ( req: Request, res: Response, next: NextFunction ) : Promise <Response> => {
+    const response_id : number = req.body.response_id;
+    const name: string = req.body.name;
+
+    const query = "UPDATE forms SET name=$1 WHERE response_id=$2";
+    const values = [ name, response_id ];
+
+    try {
+        let readQueryExecutionResult: QueryResult = await client.query(query, values);
+        return res.status(200).json({"success": true, "data": readQueryExecutionResult.rows, "message": null});
+    } catch ( err : any ){
+        Logging.error(err.message);
+        return res.status(404).json({"success": false, "data": null, "message": "Error in reading data from database"});
+    }
+}
+
+export { createEntryInCollect, readEntryInCollect, updateEntryInCollect };
