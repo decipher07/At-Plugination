@@ -4,12 +4,20 @@ import { google } from 'googleapis';
 import Logging from "../Library/logging";
 
 const createSpreadSheetController = async (req: Request, res: Response) => {
-    const access_token = req.body.access_token as string;
     const title = req.body.title as string;
+    const refresh_token = req.body.refresh_token as string;
 
     oauth2Client.setCredentials({
-        access_token: access_token
+        refresh_token: refresh_token
     })
+
+    oauth2Client.refreshAccessToken((err, tokens: any) => {
+        if (err) return console.error(err)
+
+        oauth2Client.setCredentials({
+            access_token: tokens.access_token
+        })
+    });
 
     const doc = google.sheets({ version: "v4", auth: oauth2Client });
     const resource = {
@@ -27,42 +35,50 @@ const createSpreadSheetController = async (req: Request, res: Response) => {
         return res.json({ "success": true, "data": spreadsheet.data.spreadsheetId, "message": null });
     } catch (err: any) {
         Logging.error(err.message);
-        return res.status(404).json({ "success": false, "data": null, "message": "Error in reading data from database" });
+        return res.status(404).json({ "success": false, "data": null, "message": "Error in creating data in Sheets" });
     }
 }
 
 const appendSpreadSheetController = async (req: Request, res: Response) => {
-    const refresh_token = req.body.access_token as string;
+    const refresh_token = req.body.refresh_token as string;
+    const { responseid, name, yearOfJoining, phone, email, userId } = req.body;
+    const spreadsheetId = req.body.spreadsheetId;
 
-    oauth2Client.setCredentials({
-        refresh_token: refresh_token
-    })
-
-    oauth2Client.refreshAccessToken((err, tokens: any) => {
-        if (err) return console.error(err)
-
+    try {
+        
         oauth2Client.setCredentials({
-            access_token: tokens.access_token
+            refresh_token: refresh_token
         })
-    });
-
-    const doc = google.sheets({ version: "v4", auth: oauth2Client });
     
-    const resource = {
-        values: [
-            [new Date().toISOString(), "Some value", "Another value"]
-        ]
+        oauth2Client.refreshAccessToken((err, tokens: any) => {
+            if (err) return console.error(err)
+    
+            oauth2Client.setCredentials({
+                access_token: tokens.access_token
+            })
+        });
+    
+        const doc = google.sheets({ version: "v4", auth: oauth2Client });
+        
+        const resource = {
+            values: [
+                [ responseid, name, yearOfJoining, phone, email, userId ]
+            ]
+        }
+    
+        let data = await doc.spreadsheets.values.append({
+            spreadsheetId: spreadsheetId,
+            range: 'Sheet1',
+            valueInputOption: 'RAW',
+            insertDataOption: 'INSERT_ROWS',
+            requestBody: resource
+        })
+    
+        res.json({ "success": true, "data": data.data, "message": null });
+    } catch (err: any) {
+        Logging.error(err.message);
+        return res.status(404).json({ "success": false, "data": null, "message": "Error in writing data to the sheets" });
     }
-
-    let data = await doc.spreadsheets.values.append({
-        spreadsheetId: "1MzbALtMPw6U7VqDl5NCxU3MhTjBcXt3jQbFeU8JVogU",
-        range: 'Sheet1',
-        valueInputOption: 'RAW',
-        insertDataOption: 'INSERT_ROWS',
-        requestBody: resource
-    })
-
-    res.json({"data": data});
 }
 
 export { createSpreadSheetController, appendSpreadSheetController };
