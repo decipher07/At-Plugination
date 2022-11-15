@@ -1,16 +1,6 @@
 import express, { Response, Request, NextFunction, Express } from "express";
 import Logging from "./Library/logging";
-import { config } from './config/config';
-import client from "./database/connect";
-import collectService from "./routers/collect.service.routes"
-
-/** Connect ot the Database */
-client.connect((err) => {
-    if (err)
-        throw err ;
-    
-    Logging.info("Database Connected");
-});
+import { config } from './config/config'
 
 const app: Express = express();
 
@@ -45,8 +35,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 app.get('/ping', (req: Request, res: Response, next: NextFunction) => res.status(200).json({"Hello": "World"}));
-
-app.use('/collect', collectService);
 
 /** Error handling */
 app.use((req: Request, res: Response, next: NextFunction) => {
