@@ -1,6 +1,8 @@
 import express, { Response, Request, NextFunction, Express } from "express";
 import Logging from "./Library/logging";
 import { config } from './config/config'
+import authRoutes from './routers/auth.service.router'
+import sheetRoutes from './routers/sheet.service.router'
 
 const app: Express = express();
 
@@ -20,7 +22,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next();
 });
 
-
 /** Log the request */
 app.use((req: Request, res: Response, next: NextFunction) => {
     /** Log the req */
@@ -34,7 +35,14 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next();
 });
 
-app.get('/ping', (req: Request, res: Response, next: NextFunction) => res.status(200).json({"Hello": "World"}));
+/** Auth routes */
+app.use('/auth', authRoutes);
+
+/** Sheet routes */
+app.use('/sheets', sheetRoutes);
+
+/** Ping the server */
+app.get('/ping', async (req: Request, res: Response, next: NextFunction) => res.send("Server Working"));
 
 /** Error handling */
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -48,4 +56,4 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 
 /** Listening on port */
-app.listen(config.server.port, () : void => Logging.info(`Server is running on port ${config.server.port}`))
+app.listen(config.server.port, (): void => Logging.info(`Server is running on port ${config.server.port}`))
