@@ -45,7 +45,7 @@ class Producer {
     }
 }
 
-const sheetProducer = new Producer();
-sheetProducer.createChannel();
+const collectServiceProducer = new Producer();
+collectServiceProducer.createChannel();
 
-export = sheetProducer;
+export = collectServiceProducer;

@@ -10,8 +10,8 @@ const PGPASSWORD=process.env.PGPASSWORD || '';
 const PGDATABASE=process.env.PGDATABASE || '';
 const PGPORT=process.env.PGPORT ? Number(process.env.PGPORT) : 5432;
 
-const EXCHANGE_NAME : string = process.env.EXCHANGE_NAME || 'sheetsExchange';
-const QUEUE_NAME : string = process.env.EXCHANGE_NAME || 'sheetsQueue';
+const EXCHANGE_NAME : string = process.env.EXCHANGE_NAME || 'collectExchange';
+const QUEUE_NAME : string = process.env.EXCHANGE_NAME || 'collectQueue';
 
 export const config = {
     server: {
