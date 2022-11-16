@@ -10,6 +10,9 @@ const GOOGLE_REDIRECT_URI : string = process.env.GOOGLE_REDIRECT_URI || "http://
 const EXCHANGE_NAME : string = process.env.EXCHANGE_NAME || 'sheetsExchange';
 const QUEUE_NAME : string = process.env.EXCHANGE_NAME || 'sheetsQueue';
 
+const COLLECT_SERVICE_EXCHANGE_NAME : string = process.env.COLLECT_SERVICE_EXCHANGE_NAME || 'collectExchange';
+const COLLECT_SERVICE_QUEUE_NAME : string = process.env.COLLECT_SERVICE_QUEUE_NAME || 'collectQueue';
+
 export const config = {
     server: {
         port: SERVER_PORT
@@ -22,5 +25,9 @@ export const config = {
     queue: {
         exchangeName: EXCHANGE_NAME,
         queueName: QUEUE_NAME
+    },
+    collectQueue: {
+        exchangeName: COLLECT_SERVICE_EXCHANGE_NAME,
+        queueName: COLLECT_SERVICE_QUEUE_NAME
     }
 };

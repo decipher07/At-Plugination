@@ -3,6 +3,7 @@ import Logging from "./Library/logging";
 import { config } from './config/config'
 import authRoutes from './routers/auth.service.router'
 import sheetRoutes from './routers/sheet.service.router'
+import consumeMessagesFromCollectService from "./common/consumerCollect.queue";
 
 const app: Express = express();
 
@@ -54,6 +55,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     });
 });
 
+consumeMessagesFromCollectService(config.collectQueue.exchangeName, config.collectQueue.queueName);
 
 /** Listening on port */
 app.listen(config.server.port, (): void => Logging.info(`Server is running on port ${config.server.port}`))
