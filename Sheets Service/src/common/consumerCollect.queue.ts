@@ -1,4 +1,6 @@
 import amqp, { Channel, ConsumeMessage } from "amqplib";
+import { config } from "../config/config";
+import sheetProducer from './producerSheet.queue'
 
 async function consumeMessages(exchangeName: string, queueName: string) {
     const connection = await amqp.connect("amqp://localhost");
@@ -29,6 +31,7 @@ async function consumeMessages(exchangeName: string, queueName: string) {
         // console.log(check);
 
         console.log(data);
+        await sheetProducer.publishMessage(config.queue.exchangeName, config.queue.queueName, data );
 
         channel.ack(msg!);
     });
