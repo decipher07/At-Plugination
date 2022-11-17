@@ -1,5 +1,6 @@
 import express, { Response, Request, NextFunction, Express } from "express";
 import Logging from "./Library/logging";
+import validationRoutes from './routers/validate.service.router'
 import { config } from './config/config'
 
 const app: Express = express();
@@ -32,6 +33,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
     next();
 });
+
+app.use('/validate', validationRoutes);
 
 /** Ping the server */
 app.get('/ping', async (req: Request, res: Response, next: NextFunction) => res.send("Server Working"));
