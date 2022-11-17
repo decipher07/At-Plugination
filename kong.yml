@@ -1,0 +1,21 @@
+_format_version: "2.1"
+
+services:
+  - name: validation-service
+    url: http://172.17.0.1:3003
+    routes:
+      - name: validation-route
+        paths:
+          - /validation
+  - name: sheet-service
+    url: http://172.17.0.1:3001
+    routes:
+      - name: sheet-service-route
+        paths:
+          - /sheetservice
+  - name: collect-service
+    url: http://172.17.0.1:3000
+    routes:
+      - name: collect-service-route
+        paths:
+          - /collectservice
