@@ -115,58 +115,78 @@ These are some of the features of the application monitoring system, and can be 
 
 ![Untitled](Atlan%20-%20Backend%20Task%20911017a3e6694e57b6ec03771515f560/Untitled%2015.png)
 
-# Success criteria
+## Configuration of API Gateway
 
-The criteria that must be met in order to consider this project a success. 
+As mentioned in the architecture diagram, The API Gateway is responsible for routing the request to collect service and validation service for being independent and dependent services to client.
 
-- ...
-- ...
+![Untitled](Atlan%20-%20Backend%20Task%20911017a3e6694e57b6ec03771515f560/Untitled%2016.png)
 
-# User stories
+The services running on the ports as shown as below: 
 
-How the product should work for various user types.
+![Untitled](Atlan%20-%20Backend%20Task%20911017a3e6694e57b6ec03771515f560/Untitled%2017.png)
 
-## **User type 1**
+Checking if the route is working or not
 
-- ...
-- ...
+![Untitled](Atlan%20-%20Backend%20Task%20911017a3e6694e57b6ec03771515f560/Untitled%2018.png)
 
-## **User type 2**
+## Validation Service
 
-- ...
-- ...
+The validation service in this case, checks if a phone number is valid or not. If the number is not valid, It generates a message denoting the same. 
 
-# Scope
+ 
 
-## Requirements
+![Untitled](Atlan%20-%20Backend%20Task%20911017a3e6694e57b6ec03771515f560/Untitled%2019.png)
 
-Current project requirements.
+If the phone number is valid, It returns a status of 200 with a different response ( Since, it’s just a mock of the actual case ) 
 
-- ...
-- ...
+![Untitled](Atlan%20-%20Backend%20Task%20911017a3e6694e57b6ec03771515f560/Untitled%2020.png)
 
-## Future work
+## Collect Service
 
-Future requirements.
+The collect service is responsible for storing the data into the database. The Schema for the database is as follows : 
 
-- ...
-- ...
+Note: This is a mock database and therefore the fields are very few and just for understanding purpose
 
-## Non-requirements
+![Untitled](Atlan%20-%20Backend%20Task%20911017a3e6694e57b6ec03771515f560/Untitled%2021.png)
 
-List anything that is out of scope.
+As it can be seen, I’ve made user_id as a primary key reason being that a particular user shouldn’t trying posting the same form again. 
 
-- ...
-- ...
+Google Sheets [Link](https://docs.google.com/spreadsheets/d/1MzbALtMPw6U7VqDl5NCxU3MhTjBcXt3jQbFeU8JVogU/edit?usp=sharing)  for accessing the sheets. The building logic involves to make an entry into the google sheets as and when the data is inserted into database. For Illustration purpose, I’ve commented the code for inserting the data in database for simplicity. The Google Sheets looks like this as of now: 
 
-# Designs
+![Untitled](Atlan%20-%20Backend%20Task%20911017a3e6694e57b6ec03771515f560/Untitled%2022.png)
 
-Include designs here or add directly to the Requirements or User Stories sections. 
+Now Let us try to make an API Call to the collect service and checks for the logs on all the service as well Google Sheet
 
-# Alternatives considered
+![Untitled](Atlan%20-%20Backend%20Task%20911017a3e6694e57b6ec03771515f560/Untitled%2023.png)
 
-List any alternatives you considered to this approach. Explain why they weren't used.
+As seen above, the request contains the basic details, along with spreadsheetid and refresh_token. For Generating the same, I’ve already added the auth code in the sheet service. 
 
-# Related documents
+![Untitled](Atlan%20-%20Backend%20Task%20911017a3e6694e57b6ec03771515f560/Untitled%2024.png)
 
-Include links to other pages as necessary (e.g. technical design doc, project proposal, etc.)
+As seen from the above log, The Collect service emits an event to the collectExchange queue and sheet service which is in the middle terminal, sends the same request to sheetsExchange which is fetched by “Add to Sheet” Service and appends the data to the Google Sheets.
+
+![Untitled](Atlan%20-%20Backend%20Task%20911017a3e6694e57b6ec03771515f560/Untitled%2025.png)
+
+As it can be seen from the above form, that the data has been added to the Google Sheets. 
+
+## Google Sheet Auth Service ( Optional )
+
+As it was seen in the Collect Service API, We required refresh_token as well as spreadsheetId. To generate the same, You need to log on to [localhost:3001/auth](http://localhost:3001/auth) to get the below interface. 
+
+![Untitled](Atlan%20-%20Backend%20Task%20911017a3e6694e57b6ec03771515f560/Untitled%2026.png)
+
+As the API Key is generated for test development, Only selected accounts are added to login and get the key. The below is the final response generated. As it can be seen that refresh_token is available in the response and can be used from here. The next step involves accessing Google Sheet API to get the spreadsheedId to make changes. 
+
+![Untitled](Atlan%20-%20Backend%20Task%20911017a3e6694e57b6ec03771515f560/Untitled%2027.png)
+
+## Pain Points Meme
+
+![Untitled](Atlan%20-%20Backend%20Task%20911017a3e6694e57b6ec03771515f560/Untitled%2028.png)
+
+![Untitled](Atlan%20-%20Backend%20Task%20911017a3e6694e57b6ec03771515f560/Untitled%2029.png)
+
+![Untitled](Atlan%20-%20Backend%20Task%20911017a3e6694e57b6ec03771515f560/Untitled%2030.png)
+
+![Untitled](Atlan%20-%20Backend%20Task%20911017a3e6694e57b6ec03771515f560/Untitled%2031.png)
+
+![Untitled](Atlan%20-%20Backend%20Task%20911017a3e6694e57b6ec03771515f560/Untitled%2032.png)
